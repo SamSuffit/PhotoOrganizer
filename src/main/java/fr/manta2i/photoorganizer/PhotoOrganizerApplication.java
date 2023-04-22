@@ -42,6 +42,7 @@ public class PhotoOrganizerApplication implements CommandLineRunner {
         inputDirectory.stream()
                 .peek(s -> LOG.info("Starting input {}" ,s ))
                 .map(File::new)
+                .filter(File::exists)
                 .forEach(directory -> Arrays.stream(Objects.requireNonNull(directory.listFiles()))
                         .filter(PhotoOrganizerApplication::isIgnoreFile)
                         .forEach(file -> {
