@@ -56,7 +56,7 @@ public class PhotoOrganizerApplication implements CommandLineRunner {
                                 copyFileIfNeeded(file,  outputFile);
 
                             } catch (IOException e) {
-                                throw new RuntimeException(e);
+                                throw new CopyException(e);
                             }
                         })
                 )
