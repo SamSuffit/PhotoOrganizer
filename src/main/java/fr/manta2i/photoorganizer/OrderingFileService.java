@@ -2,6 +2,7 @@ package fr.manta2i.photoorganizer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -17,12 +18,16 @@ import java.util.Objects;
 @Service
 public class OrderingFileService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(OrderingFileService.class);
+    private final File outputDirectory;
 
-    private final File output = new File("C:\\Users\\Samuel\\Pictures");
+    private static final Logger LOG = LoggerFactory.getLogger(OrderingFileService.class);
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy MM")
             .withZone(ZoneId.systemDefault());
+
+    public OrderingFileService(@Value("${outputDirectory}") File outputDirectory) {
+        this.outputDirectory = outputDirectory;
+    }
 
     public void orderDirectory(File directory) {
         Arrays.stream(Objects.requireNonNull(directory.listFiles()))
@@ -32,7 +37,7 @@ public class OrderingFileService {
                         BasicFileAttributes attr =
                                 Files.readAttributes(file.toPath(), BasicFileAttributes.class);
                         String outputDirYearMonth = formatter.format(attr.lastModifiedTime().toInstant());
-                        File outputDir = new File(output, outputDirYearMonth);
+                        File outputDir = new File(outputDirectory, outputDirYearMonth);
                         File outputFile = new File(outputDir, file.getName());
                         LOG.info("File {} {} exist {} isDir {} outFileExist {}", file.getName(), outputDirYearMonth, outputDir.exists(), outputDir.isDirectory(), outputFile.exists());
                         copyFileIfNeeded(file, outputFile);
